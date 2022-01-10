@@ -2,30 +2,42 @@ import { useState, useEffect } from "react";
 import BlogList from "./BlogList";
 
 const Home = () => {
-    const [blogs, setBlogs] = useState([
-        { title: 'My new Website', body: 'lorem ipsum ...', author: 'mario', id: 1 },
-        { title: 'Welcome party', body: 'lorem ipsum ...', author: 'Yoshi', id: 2 },
-        { title: 'Web dev top tips', body: 'lorem ipsum ...', author: 'mario', id: 3 },
-    ]);
-
-    const [name, setName] = useState('mario');
-
-    const handleDelete = (id) => {
-        const newBlogs = blogs.filter(blog => blog.id !== id);
-        setBlogs(newBlogs);
-    }
+    const [blogs, setBlogs] = useState(null);
+    const [isPending, setIsPending] = useState(true);
+    const [error, setError] = useState(null);
+    // const [name, setName] = useState('mario');
 
     useEffect(() => {
-        console.log('use effet run')
-        console.log(name);
-    }, [name]);
+        // setTimeout to simulate the realistic time it take to get data
+        setTimeout(() => {
+            fetch('http://localhost:8000/blogs')
+                .then(res => {
+                    if (!res.ok) {
+                        throw Error('could not fetch the data for that resource');
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    setBlogs(data);
+                    setIsPending(false);
+                })
+                .catch(err => {
+                    setError(err.message);
+                    setIsPending(false);
+                })
+        }, 1000)
+    }, []);
 
     return (
         <div className="home">
             {/* <BlogList blogs={blogs} title='All Blogs!' /> */}
-            <BlogList blogs={blogs.filter((blog) => blog.author === 'mario')} title="mario's blogs" handleDelete={handleDelete} />
-            <button onClick={() => setName('Nati')}> Change name </button>
-            <p>{name}</p>
+            {error && <div>{error}</div>}
+            {isPending && <div> Loading... </div>}
+            {/* this makes sure by checking if blogs is not false/ null inorder to execute the next part of  the codee/component */}
+            {blogs && <BlogList blogs={blogs} title="All blogs!" />}
+            {/* <button onClick={() => setName('Nati')}> Change name </button> */}
+            {/* <p>{name}</p> */}
         </div>
     );
 }
