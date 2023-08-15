@@ -29,6 +29,12 @@
       "body": " // history.go(-1);\n            history.push('./')",
       "author": "Nati",
       "id": 7
+    },
+    {
+      "title": "DevOps Page",
+      "body": "Created when I was completing DevOps Project",
+      "author": "Nati",
+      "id": 8
     }
   ]
 }
